@@ -1,7 +1,0 @@
-Section_00000:f_0_2:"A baseball player in a green jersey prepares to throw his pitch."
-Section_00001:f_3_18:"A baseball player in a green jersey throws a baseball pitch."
-Section_00002:f_19_27:"The catcher catches the baseball but it bounces out of his hands. The catcher runs after the ball. The pitcher runs to the home base."
-Section_00003:f_28_36:"A baseball player in a blue jersey runs. He slides onto the home base."
-Section_00004:f_37_51:"A baseball player in a blue jersey joggs of the baseball field."
-Section_00005:f_52_54:"A baseball player joggs to the dugout and gets a high-five from a team mate."
-Section_00006:f_55_80:"A baseball catcher without his visor is filmed in a close-up shot, walking back to the home base and adjusts his visor."
