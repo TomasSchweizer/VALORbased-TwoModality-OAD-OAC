@@ -1,0 +1,37 @@
+# For Jupyter Notebooks
+ipykernel
+ipywidgets
+
+# For tracking experiments
+wandb
+
+# For configuration file management
+hydra-core
+pyrootutils
+
+# For simpler ml workflow
+pytorch-lightning
+
+# For fast dataloading
+nvidia-dali-cuda120
+
+# For bert model huggingface
+boto3
+
+# For state space models
+causal-conv1d
+mamba-ssm
+
+# For videomaev2 in mmaction2
+timm
+
+# For evaluation
+numpy
+scipy
+scikit-learn
+pandas
+opencv-python
+
+# For visualization
+matplotlib
+seaborn

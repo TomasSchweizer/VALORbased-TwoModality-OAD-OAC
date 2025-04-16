@@ -1,0 +1,264 @@
+# videomaev2_crossattentionadap_mamba_head_adamw_lwcdscheduler
+_target_: src.modules.models.mamba.mamba_architectures.VideoMAEv2BackboneTransformerDecoderAdapterMambaBaseHead
+
+data_info:
+  
+  dataset_name: ${datamodule.dataset_info.dataset_name}
+  class_names: ${datamodule.dataset_info.class_names} 
+  num_classes: ${datamodule.dataset_info.num_classes}
+  ignore_index: ${datamodule.dataset_info.ignore_index}
+  background_index: ${datamodule.dataset_info.background_index}
+
+
+backbone:
+  
+  pretrained: True
+  pretrained_checkpoints_dir: ${paths.pretrained_checkpoints_dir}
+  pretrained_checkpoint_name: vit-base_pretrain-videomaev2-k710-valor-ufc101_fps-24_frames-16_swstride-6.pth
+  unfreeze_backbone: False # False, nth layer, True  
+
+  instantiate:
+    _target_: mmaction.models.backbones.vit_mae.VisionTransformer
+    img_size: 224
+    num_frames: 16
+    patch_size: 16
+    depth: 12
+    embed_dims: 768
+    mlp_ratio: 4
+    norm_cfg: 
+      eps: 1.0e-06
+      type: LN    
+    num_heads: 12
+    qkv_bias: True
+    return_feat_map: True
+
+adapter:
+  _target_: src.modules.models.feature_adapters.feature_adapters.TransformerDecoderAdapter
+  decoder:
+    _target_: torch.nn.TransformerDecoder
+    num_layers: 4
+    decoder_layer:
+      _target_: torch.nn.TransformerDecoderLayer
+      nhead: 8
+      dim_feedforward_scale: 2
+      dropout: 0.1
+      activation: "relu"
+      layer_norm_eps: 1.0e-6
+      batch_first: True
+      norm_first: True
+      bias: True
+      tgt_is_causal: False
+      memory_is_causal: False
+      use_tgt_mask: True
+      use_memory_mask: True
+    query:
+      num_queries: 32
+
+base:
+  _target_: src.modules.models.mamba.mamba_architectures.MambaDecoder
+  num_layers: 8
+  d_state_expansion_factor: 16
+  d_conv: 2
+  dt_rank: 'auto'
+  block_expansion_factor: 2
+
+head:
+  _target_: src.modules.models.heads.heads.BaseHead 
+  name:
+    linear
+    # nonelinear
+  num_layers: 1  
+  activation:
+    # null
+    # _target_: torch.nn.ReLU
+    # _target_: torch.nn.GELU
+  output_activation:  
+    null
+    # _target_: torch.nn.ReLU
+    # _target_: torch.nn.GELU
+  output_norm : 
+    null 
+    # _target_: torch.nn.LayerNorm # null, _target_: torch.nn.LayerNorm, 
+    # _target_: src.modules.models.mamba.components.layernorm.RMSNorm  
+  bias: False
+  expansion_factor: 1
+  output_dim: ${module.model.data_info.num_classes}    
+
+criterions:
+  
+  losses:
+  
+  #  nonuniform_loss:
+  #     outputs:
+  #       type: logits
+  #     targets: 
+  #       type: labels
+  #     form: batch
+  #     applied_to_frames: allframes   
+
+  #     weight: 1.0
+
+  #     instantiate:          
+  #       _target_: src.modules.criterions.criterions.NoneUniformCrossEntropyLoss
+  #       num_classes: ${module.model.data_info.num_classes} 
+  #       n_last: 1 
+  #       use_weights: True
+  #       dataset_name: ${module.model.data_info.dataset_name} 
+  #       reduction: mean
+
+    wcel_loss:
+      outputs:
+        type: logits
+      targets: 
+        type: labels
+      form: flattened
+      applied_to_frames: allframes   
+
+      weight: 1.0
+
+      instantiate:          
+        _target_: src.modules.criterions.criterions.WeightedCrossEntropyLoss
+        num_classes: ${module.model.data_info.num_classes} 
+        use_weights: True
+        dataset_name: ${module.model.data_info.dataset_name} 
+        reduction: mean
+
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 1.0e-4
+  weight_decay: 1.0e-5
+  betas: [0.9, 0.999]
+
+scheduler:
+  _target_: src.modules.schedulers.schedulers.LinearWarmupCosineAnnealingLR
+  warmup_epochs: 5
+  warmup_start_lr: 0.0
+  eta_min: 0.0
+
+weights_init:
+  
+  adapter_weights_init:
+    rescale_prenorm_residual: True
+    n_residuals_per_layer: 2.0  
+    linear:
+      names: ["self_attn.out_proj.weight", "multihead_attn.out_proj.weight", "linear1.weight", "linear2.weight"]
+      weight:
+        _target_: torch.nn.init.trunc_normal_
+        mean: 0.0
+        std: 0.01
+        a: -2.0
+        b: 2.0
+      bias:
+        _target_: torch.nn.init.zeros_
+    layer_norm:
+      weight:
+        _target_: torch.nn.init.constant_
+        val: 1.0
+      bias:
+        _target_: torch.nn.init.zeros_
+
+
+  mamba_decoder_weigths_init:
+    rescale_prenorm_residual: True
+    n_residuals_per_layer: 1.0      
+    linear:
+      names: ["out_proj.weight"]
+      weight:
+        _target_: torch.nn.init.trunc_normal_
+        mean: 0.0
+        std: 0.01
+        a: -2.0
+        b: 2.0
+      bias:
+        _target_: torch.nn.init.zeros_
+
+  head_weigths_init:
+    linear:
+      weight:
+        _target_: torch.nn.init.trunc_normal_
+        mean: 0.0
+        std: 0.01
+        a: -2.0
+        b: 2.0
+      bias:
+        _target_: torch.nn.init.zeros_
+
+metrics:
+
+  train:
+
+    mAP:
+      outputs:
+        type: logits
+      targets:
+        type: labels
+      form: flattened 
+      applied_to_frames: allframes
+      apply_softmax: True
+
+      instantiate:
+        _target_: src.modules.metrics.metrics.MeanAveragePrecision
+        num_classes: ${module.model.data_info.num_classes}
+        class_names: ${module.model.data_info.class_names}
+        background_index: ${module.model.data_info.background_index} #TODO think about if we want to ignore also class backgrounds (maybe switch to extended_background_indices)
+        ignore_index: ${module.model.data_info.ignore_index}
+        merge_ignore_index_into_background_index: False
+        return_dict: True
+
+    Acc:
+      outputs:
+        type: logits
+      targets:
+        type: labels
+      form: flattened 
+      applied_to_frames: allframes
+      apply_softmax: True
+
+      
+      instantiate: 
+        _target_:  torchmetrics.classification.MulticlassAccuracy
+        num_classes: ${module.model.data_info.num_classes}
+        ignore_index: ${module.model.data_info.ignore_index}
+        top_k: 1
+        average: "micro" # micro: normal accuracy , macro: accuracy for each class and then mean, none: accuracy for each class 
+  
+  valid:
+
+    mAP:
+      outputs:
+        type: logits
+      targets:
+        type: labels
+      form: flattened 
+      applied_to_frames: allframes
+      apply_softmax: True
+
+      instantiate: 
+        _target_: src.modules.metrics.metrics.MeanAveragePrecision
+        num_classes: ${module.model.data_info.num_classes}
+        class_names: ${module.model.data_info.class_names}
+        background_index: ${module.model.data_info.background_index}
+        ignore_index: ${module.model.data_info.ignore_index}
+        merge_ignore_index_into_background_index: False
+        return_dict: True
+
+
+    Acc:
+      outputs:
+        type: logits
+      targets:
+        type: labels
+      form: flattened 
+      applied_to_frames: allframes
+      apply_softmax: True
+      
+      instantiate: 
+        _target_:  torchmetrics.classification.MulticlassAccuracy
+        num_classes: ${module.model.data_info.num_classes}
+        ignore_index: ${module.model.data_info.ignore_index}
+        top_k: 1
+        average: "micro" # micro: normal accuracy , macro: accuracy for each class and then mean, none: accuracy for each class 
+
+
+
+

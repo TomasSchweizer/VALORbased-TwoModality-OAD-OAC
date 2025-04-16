@@ -1,0 +1,55 @@
+_target_: src.datamodules.thumos_datamodules.ThumosImagesDataModule
+
+defaults:
+  - _self_
+  - dataset_info: thumos_data-images_fps-24_frames-16_swstride-6
+
+datasets:
+  
+  # Actually the valid dataset for Thumos  
+  train_dataset:
+    _target_: src.datamodules.datasets.untrimmed_mixed_overlapping_clips_images_dataset.UntrimmedMixedOverlappingClipsImagesDataset
+    data_root_path: ${paths.data_dir}/thumos
+    load_precreated_dataset: False
+    save_dataset_as_precreated: False
+    precreated_dataset_path: ${paths.precreated_datasets_dir}/thumos/untrimmed_mixed_overlapping_clips_images_dataset/
+    clip_frames: 16
+    n_cuts: 256 # 1024
+    shuffle_on_load: True
+
+  # Actually the test dataset for Thumos  
+  valid_dataset:
+    _target_: src.datamodules.datasets.untrimmed_clips_images_dataset.UntrimmedClipsImagesDataset
+    data_root_path: ${paths.data_dir}/thumos
+    load_precreated_dataset: False
+    save_dataset_as_precreated: False
+    precreated_dataset_path: ${paths.precreated_datasets_dir}/thumos/untrimmed_clips_images_dataset/
+    clip_frames: 16
+    shuffle_on_load: False
+
+loaders:
+
+  train_loader:
+    batch_size: 1
+    shuffle: True
+    num_workers: 0
+    drop_last: True
+    pin_memory: False
+
+  valid_loader:
+    batch_size: 1
+    shuffle: False
+    num_workers: 0
+    drop_last: False
+    pin_memory: False
+
+  predict_loader:
+    batch_size: 1
+    shuffle: False
+    num_workers: 0
+    drop_last: False
+    pin_memory: False
+
+transforms: 
+  train_transforms: None
+  valid_transforms: None

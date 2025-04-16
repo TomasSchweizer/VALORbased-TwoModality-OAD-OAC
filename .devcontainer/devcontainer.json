@@ -1,0 +1,39 @@
+{
+  "build": 
+    {
+      "dockerfile": "Dockerfile",
+      "args":
+      {    
+        "CUDA": "12.1",
+        "PYTHON_PACKAGE_MANAGER": "conda",
+        "BASE": "pytorch/pytorch:2.1.2-cuda12.1-cudnn8-devel",
+        "USERNAME": "schweizercontainer",
+        "USER_UID": "1009"
+
+      }
+    },
+    "customizations": {
+      // Configure properties specific to VS Code.
+      "vscode": {
+       
+        // Add the IDs of extensions you want installed when the container is created.
+        "extensions": [
+          "ms-python.python",
+          "ms-python.vscode-pylance",
+          "ms-toolsai.jupyter"
+        ]
+      }
+    },
+    "workspaceFolder": "/home/schweizercontainer/${localWorkspaceFolderBasename}",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/schweizercontainer/${localWorkspaceFolderBasename},type=bind",
+    "mounts": [
+      "source=/data10/staff/patsch/,target=/home/schweizercontainer/${localWorkspaceFolderBasename}/data,type=bind,consistency=cached"
+      ],
+  
+    "postCreateCommand": ["bash", "-i", "/home/schweizercontainer/${localWorkspaceFolderBasename}/.devcontainer/postCreateCommand.sh"],
+    "runArgs": [
+      "--gpus=all"
+    ]
+
+  }
+  

@@ -1,0 +1,20 @@
+# @package _global_
+
+defaults:
+  - _self_
+  - hydra: defaults
+  - paths: defaults
+  
+  # These are all set in experimts
+  - callbacks: null
+  - datamodule: null
+  - module: null  
+  - experiment: train_thumos_tufvfcd_vufvfd_valor #train_thumos_tufvfcd_vufvfd_valor #train_thumosbaseballpitch_tufvfcd_vufvfd_valor #train_thumos_tufvfcd_vufvfd_valor #train_thumosbaseballpitch_tumcfcd_vufvfd_valor #train_thumosbaseballpitch_tufvfcd_vufvfd_valor  #train_thumos_tumcid_vumcid_multigpusingleoptim_vmaev2tdamambahead_aw_lrcs # train_thumos_tumocid_vumcid_multigpusingleoptim_vmaev2tdamambahead_aw_lrcs
+
+
+
+
+
+
+
+

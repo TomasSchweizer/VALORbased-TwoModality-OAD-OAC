@@ -1,0 +1,57 @@
+# @package _global_
+
+defaults:
+- override /callbacks: lrm_mc
+- override /datamodule: thumos_train_umcid_val_umcid_notransforms
+- override /module: multigpu_singleoptim_module
+- override /module/model: videomaev2_crossattentionadap_mamba_head_adamw_lwcdscheduler 
+
+checkpoint_path: "../experiments/OAD/train_thumos_tumcid_vumcid_multigpusingleoptim_vmaev2tdamambahead_aw_lrcs/checkpoints/2_train_thumos_tumcid_vumcid_multigpusingleoptim_vmaev2tdamambahead_aw_lrcs/0-10.ckpt"
+
+trainer:
+  _target_: pytorch_lightning.Trainer
+  default_root_dir: ${paths.output_dir}
+  min_epochs: 1 # prevents early stopping
+  max_epochs: 40
+  
+  strategy: ddp
+  accelerator: gpu
+  devices: [6,7]
+  num_nodes: 1
+  sync_batchnorm: True
+  precision: 32
+  # reload training dataloaders every epoch
+  reload_dataloaders_every_n_epochs: 1 
+  # perform a validation loop every N training epochs
+  check_val_every_n_epoch: 1
+  # log at every nth step
+  log_every_n_steps: 1
+  # set True to ensure deterministic results
+  # makes training slower but gives more reproducibility than just setting seeds
+  deterministic: False
+  enable_checkpointing: True # set to true and add checkpointing callback to checkpoint best validation model.
+  detect_anomaly: False
+  use_distributed_sampler: True
+  
+  # JUST FOR TESTING DATALOADING TIME
+  # max_steps: 10
+  # profiler: "simple"
+
+
+
+env:
+  seed: 0
+  max_threads: 24
+
+logger:
+  _target_: pytorch_lightning.loggers.wandb.WandbLogger
+  entity: "schweizertomas" # set to name of your wandb team
+  offline: False
+  anonymous: null # enable anonymous logging
+  project: OAD
+  group: train_thumos_tumcid_vumcid_multigpusingleoptim_vmaev2tdamambahead_aw_lrcs
+  job_type: train
+  save_dir: ${paths.output_dir}
+  log_model: True
+  name: null
+  notes: null 

@@ -1,0 +1,192 @@
+_target_: src.modules.models.valor.valor_architectures.VideoMambaDecoderSharedTextMultimodalBertEncoderDecoder
+
+data_info:
+  
+  dataset_name: ${datamodule.dataset_info.dataset_name}
+  class_names: ${datamodule.dataset_info.class_names} 
+  num_classes: ${datamodule.dataset_info.num_classes}
+  ignore_index: ${datamodule.dataset_info.ignore_index}
+  background_index: ${datamodule.dataset_info.background_index}
+
+video_decoder:
+
+  adapter:      
+    num_layers: 1
+    encoder_embed_dims: 768 #3072
+    decoder_embed_dims: 768
+  
+  base:
+    num_layers: 8
+    d_state_expansion_factor: 16
+    d_conv: 4
+    dt_rank: 'auto'
+    block_expansion_factor: 2
+
+  head:  
+    num_layers: 1
+    num_classes: 22
+
+shared_text_multimodal_encoder_decoder:
+
+  bert:        
+    checkpoint_path: "${paths.pretrained_checkpoints_dir}/bert-base-uncased.bin"
+    attention_probs_dropout_prob: 0.1
+    hidden_act: "gelu"
+    hidden_dropout_prob: 0.1
+    hidden_size: 768
+    initializer_range: 0.02
+    intermediate_size: 3072
+    max_position_embeddings: 512
+    num_attention_heads: 12
+    num_hidden_layers: 12
+    type_vocab_size: 2
+    vocab_size: 30522
+
+  bert_tokenizer:
+    vocab_path: "${paths.pretrained_checkpoints_dir}/bert-base-uncased-vocab.txt"
+
+  token_masker:
+    mask_token: null
+    mask_prob: 0.6
+    range_start: 106
+    range_end: 30522
+
+contrastive_heads:
+
+  contra_head_text:
+    embed_dims: null
+    contra_dims: 512  
+
+  contra_head_video:  
+    embed_dims: null
+    contra_dims: 512
+
+weights_init:
+
+  mamba_decoder_weigths_init:
+    rescale_prenorm_residual: True
+    n_residuals_per_layer: 1.0      
+    linear:
+      names: ["out_proj.weight"]
+      weight:
+        _target_: torch.nn.init.trunc_normal_
+        mean: 0.0
+        std: 0.01
+        a: -2.0
+        b: 2.0
+      bias:
+        _target_: torch.nn.init.zeros_
+
+  head_weigths_init:
+    linear:
+      weight:
+        _target_: torch.nn.init.trunc_normal_
+        mean: 0.0
+        std: 0.01
+        a: -2.0
+        b: 2.0
+      bias:
+        _target_: torch.nn.init.zeros_
+
+criterions:
+  
+  losses:
+  
+    oad_loss:
+      output: oad
+      weight: 1.0
+      instantiate:          
+        _target_: src.modules.criterions.criterions.MultipLableCrossEntropyLoss
+        num_classes: ${module.model.data_info.num_classes} 
+        use_weights: False
+        dataset_name: ${module.model.data_info.dataset_name} 
+        reduction: mean
+
+    multimodal_captioning_loss:
+      output: multimodal_captioning
+      weight: 0.1
+      instantiate:          
+        _target_: src.modules.criterions.criterions.MultimodalCaptioningLoss
+
+    contrastive_multimodal_alignment_loss:
+      output: contrastive_multimodal_alignment
+      weight: 0.1
+      instantiate:
+        _target_: src.modules.criterions.criterions.ContrastiveMultimodalAlignmentLoss #SupervisedContrastiveMultimodalAlignmentLoss #ContrastiveMultimodalAlignmentLoss
+        starting_temp: 0.1
+
+
+metrics:
+
+  train:
+
+    mAP:
+      instantiate:
+        _target_: src.modules.metrics.metrics.MeanAveragePrecision
+        num_classes: ${module.model.data_info.num_classes}
+        class_names: ${module.model.data_info.class_names}
+        background_index: ${module.model.data_info.background_index} #TODO think about if we want to ignore also class backgrounds (maybe switch to extended_background_indices)
+        ignore_index: ${module.model.data_info.ignore_index}
+        merge_ignore_index_into_background_index: False
+        return_dict: False
+
+    Acc:
+      instantiate: 
+        _target_:  src.modules.metrics.metrics.MulticlassAccuracyWrapper
+        num_classes: ${module.model.data_info.num_classes}
+        ignore_index: ${module.model.data_info.ignore_index}
+        top_k: 1
+        average: "micro" # micro: normal accuracy , macro: accuracy for each class and then mean, none: accuracy for each class 
+  
+  valid:
+    mAP:
+      instantiate: 
+        _target_: src.modules.metrics.metrics.MeanAveragePrecision
+        num_classes: ${module.model.data_info.num_classes}
+        class_names: ${module.model.data_info.class_names}
+        background_index: ${module.model.data_info.background_index} #TODO think about if we want to ignore also class backgrounds (maybe switch to extended_background_indices)
+        ignore_index: ${module.model.data_info.ignore_index}
+        merge_ignore_index_into_background_index: False
+        return_dict: False
+
+
+    Acc:
+      instantiate: 
+        _target_:  src.modules.metrics.metrics.MulticlassAccuracyWrapper
+        num_classes: ${module.model.data_info.num_classes}
+        ignore_index: ${module.model.data_info.ignore_index}
+        top_k: 1
+        average: "micro" # micro: normal accuracy , macro: accuracy for each class and then mean, none: accuracy for each class 
+
+  test:
+    mAP:
+      instantiate: 
+        _target_: src.modules.metrics.metrics.MeanAveragePrecision
+        num_classes: ${module.model.data_info.num_classes}
+        class_names: ${module.model.data_info.class_names}
+        background_index: ${module.model.data_info.background_index} #TODO think about if we want to ignore also class backgrounds (maybe switch to extended_background_indices)
+        ignore_index: ${module.model.data_info.ignore_index}
+        merge_ignore_index_into_background_index: False
+        return_dict: False
+
+    Acc:
+      instantiate: 
+        _target_:  src.modules.metrics.metrics.MulticlassAccuracyWrapper
+        num_classes: ${module.model.data_info.num_classes}
+        ignore_index: ${module.model.data_info.ignore_index}
+        top_k: 1
+        average: "micro" # micro: normal accuracy , macro: accuracy for each class and then mean, none: accuracy for each class 
+
+
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 5.0e-5
+  weight_decay: 1.0e-3
+  betas: [0.9, 0.999]
+
+scheduler:
+  _target_: src.modules.schedulers.schedulers.LinearWarmupCosineAnnealingLR
+  warmup_epochs: 15
+  warmup_start_lr: 5.0e-6
+  eta_min: 0.0
+  

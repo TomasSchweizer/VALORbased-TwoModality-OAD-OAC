@@ -1,0 +1,27 @@
+dataset_name: thumos
+
+modality: features
+features_dirname:  DATA-thumos-fps24-frames16-swstride6_MODEL-vit-base_pretrain-videomaev2-k710-valor-ufc101_fps-24_frames-16_swstride-6 # DATA-thumos-fps24-frames6_MODEL-resnet50-k400-fps24to30-frames8-bninception-k400-fps24to30-frames-8 #DATA-thumos-fps24-frames16-swstride6_MODEL-vit-base_pretrain-videomaev2-k710-valor-ufc101_fps-24_frames-16_swstride-6 
+#features_dirname: DATA-thumos-fps24-frames6_MODEL-resnet50-k400-fps24to30-frames8-bninception-k400-fps24to30-frames-8
+
+target_dirname: DATA-thumos-corrected-labels/BaseballPitch
+#target_dirname: target_perframe
+captions_dirname: DATA-thumos-perfeature-captions/BaseballPitch
+#captions_dirname: DATA-thumos-perfeature-captions-perclass_MODEL-chatgpt-4omni/BaseballPitch
+#captions_dirname: DATA-thumos-perfeature-label-captions/BaseballPitch
+
+train_video_names: ["video_validation_0000266", "video_validation_0000681", "video_validation_0000682", "video_validation_0000683", "video_validation_0000684", 
+                    "video_validation_0000685", "video_validation_0000686", "video_validation_0000687", "video_validation_0000688", "video_validation_0000689", "video_validation_0000690"]
+
+
+valid_video_names: ["video_test_0000324", "video_test_0000664", "video_test_0000714", "video_test_0000767", "video_test_0000873", "video_test_0000946", "video_test_0000964",
+                    "video_test_0001038", "video_test_0001182", "video_test_0001324", "video_test_0001447"]
+
+video_fps: 24
+feature_fps: 4
+max_captions_tokens: 100
+
+class_names: ["Background", "BaseballPitch", "BasketballDunk", "Billiards", "CleanAndJerk", "CliffDiving", "CricketBowling", "CricketShot", "Diving", "FrisbeeCatch", "GolfSwing", "HammerThrow", "HighJump", "JavelinThrow", "LongJump", "PoleVault", "Shotput", "SoccerPenalty", "TennisSwing", "ThrowDiscus", "VolleyballSpiking", "Ambiguous"]
+num_classes: 22
+ignore_index: 21
+background_index: 0

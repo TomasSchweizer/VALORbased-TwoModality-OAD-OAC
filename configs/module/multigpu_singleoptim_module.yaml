@@ -1,0 +1,4 @@
+_target_: src.modules.multigpu_singleoptim_module.MultiGPUSingleOptimModule
+
+defaults:
+  - model: videomaev2_videoladderadapter_videofeaturemapconvpooler_videomambadecoder_sharedtextmultimodalbertencoderdecoder

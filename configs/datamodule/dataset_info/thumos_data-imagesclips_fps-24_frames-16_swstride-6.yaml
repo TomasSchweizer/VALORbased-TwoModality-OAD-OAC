@@ -1,0 +1,16 @@
+dataset_name: thumos
+
+modality: images
+train_images_dirname: data-images_fps-24_frames-16_swstride-6/validation/
+valid_images_dirname: data-images_fps-24_frames-16_swstride-6/test/
+
+video_fps: 24
+image_size: [3,180,320]
+images_per_feature: 16
+sliding_window_stride: 6
+feature_fps: 4
+
+class_names: ["Background", "BaseballPitch", "BasketballDunk", "Billiards", "CleanAndJerk", "CliffDiving", "CricketBowling", "CricketShot", "Diving", "FrisbeeCatch", "GolfSwing", "HammerThrow", "HighJump", "JavelinThrow", "LongJump", "PoleVault", "Shotput", "SoccerPenalty", "TennisSwing", "ThrowDiscus", "VolleyballSpiking", "Ambiguous"]
+num_classes: 22
+ignore_index: 21
+background_index: 0

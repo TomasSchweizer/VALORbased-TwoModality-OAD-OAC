@@ -1,0 +1,4 @@
+Section_00000:f_0_6:"A man with a baseball jersey stands on the mount and waits to throw a first pitch."
+Section_00001:f_7_19:"The man throws a baseball pitch towards the catcher."
+Section_00002:f_20_33:"The catcher catchers the ball. The man who pitched and the catcher walk towards eachother."
+Section_00003:f_34_122:"Two man hug and talk to each other. Then the man in the black hody signs a baseball."

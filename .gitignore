@@ -1,0 +1,13 @@
+**/data
+**/data_not_mounted/DATA-thumos-corrected-labels
+**/data_not_mounted/DATA-thumos-fps24-frames16-swstride6_MODEL-vit-base_pretrain-videomaev2-k710-valor-ufc101_fps-24_frames-16_swstride-6
+**/data_not_mounted/DATA-thumos-fps24-frames6_MODEL-resnet50-k400-fps24to30-frames8
+**/data_not_mounted/DATA-thumos-fps24-frames6_MODEL-resnet50-k400-fps24to30-frames8-bninception-k400-fps24to30-frames-8
+**/data_not_mounted/DATA-thumos-fps24-frames16-swstride6_MODEL-vitbase-pretrain-videomaev2-k710-fps24to30-frames16
+**/experiments
+**/init_examplars
+**/notebooks
+**/devcontainer/postCreateCommand.sh
+**/mmaction2
+**/precreated_datasets
+**/pretrained_checkpoints
