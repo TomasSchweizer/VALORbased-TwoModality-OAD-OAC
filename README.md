@@ -3,9 +3,11 @@
 This repository holds the code to replicate the results of the VALOR-based Two-Modality Training.
 It can be used to train and test in parallel, and also run the recurrent inference for OAD and OAC.
 
+>[!IMPORTANT] This repository is intended for the storage of source code. Please note that the associated data is not included, and therefore, additional steps will be needed to run the code.
+
 ## Setup
 
-The workspace is set up using devcontainers. Therefore, the devcontainer extension is needed for Visual Studio Code.
+The devcontainer extension is needed for Visual Studio Code.
 The devcontainer then sets up the development environment.
 The devcontainer is based on the image: `pytorch:2.1.2-cuda12.1-cudnn8-devel`.
 Then, via pip, the `requirements.txt` packages are installed, most importantly this codebase uses:
@@ -19,8 +21,13 @@ Also, the `mmaction2` codebase is git cloned into this repository, and all neces
 For training from scratch, the following checkpoints are needed.
 For the text encoder and two-modality decoder, either:
 - **BERT_B checkpoint**: `bert-base-uncased.bin`, `bert-base-uncased-vocab.txt`
+[Link to download from VALOR](https://drive.google.com/file/d/1KyqOzQIzNcL1Q9uEGmDECHfU-8CCd4kk/view)
 or:
 - **VALOR_L BERT_B checkpoint**: `bert_b_valor_l.pt`, `bert-base-uncased-vocab.txt`
+[Link to download from VALOR](https://drive.google.com/file/d/1l-G255vTPt6XKMK-Ln42Jz_raGzipL84/view)
+
+
+These can be downloaded from the [VALOR github](https://github.com/TXH-mercury/VALOR)
 
 ## Data
 
@@ -83,3 +90,15 @@ The `module` config defines:
 For recurrent testing, the `test.py` script in the `src` directory has to be launched.
 This uses the `test.yaml` config file, in which a test experiment has to be called.
 Then, the rest of the configs is the same as for training, except that you have to provide a checkpoint of a trained model to the `checkpoint_path` field in the `experiment` config.
+
+## Relevant Repositories
+
+The code is based on three repositories:
+
+
+The code is adapted or strongly influenced by:
+- [VALOR](https://github.com/TXH-mercury/VALOR)
+- [Mamba](https://github.com/state-spaces/mamba)
+
+And for using the VideoMAEv2 it uses
+- [mmaction2](https://github.com/open-mmlab/mmaction2)

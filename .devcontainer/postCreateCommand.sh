@@ -17,4 +17,4 @@ else
     "/opt/conda/bin/pip" install --user -v -e .
     cd ..
 fi
-wandb login #your login code     
+wandb login #your login code
