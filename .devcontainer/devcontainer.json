@@ -7,7 +7,7 @@
         "CUDA": "12.1",
         "PYTHON_PACKAGE_MANAGER": "conda",
         "BASE": "pytorch/pytorch:2.1.2-cuda12.1-cudnn8-devel",
-        "USERNAME": "schweizercontainer",
+        "USERNAME": "containeruser",
         "USER_UID": "1009"
 
       }
@@ -24,13 +24,13 @@
         ]
       }
     },
-    "workspaceFolder": "/home/schweizercontainer/${localWorkspaceFolderBasename}",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/home/schweizercontainer/${localWorkspaceFolderBasename},type=bind",
+    "workspaceFolder": "/home/containeruser/${localWorkspaceFolderBasename}",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/containeruser/${localWorkspaceFolderBasename},type=bind",
     "mounts": [
-      "source=/data10/staff/patsch/,target=/home/schweizercontainer/${localWorkspaceFolderBasename}/data,type=bind,consistency=cached"
+      "source=PATH_TO_DATA,target=/home/containeruser/${localWorkspaceFolderBasename}/data,type=bind,consistency=cached"
       ],
   
-    "postCreateCommand": ["bash", "-i", "/home/schweizercontainer/${localWorkspaceFolderBasename}/.devcontainer/postCreateCommand.sh"],
+    "postCreateCommand": ["bash", "-i", "/home/containeruser/${localWorkspaceFolderBasename}/.devcontainer/postCreateCommand.sh"],
     "runArgs": [
       "--gpus=all"
     ]

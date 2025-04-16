@@ -28,7 +28,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
      
 USER $USERNAME
 
-WORKDIR /home/schweizercontainer/ws_train_videomaev2_adapter_mamba_on_images/
+WORKDIR /home/containeruser/WORKDIR/
 
 ENV PATH="${PATH}:/home/${USERNAME}/.local/bin"
 ENV PATH="${PATH}:/opt/conda/bin"
