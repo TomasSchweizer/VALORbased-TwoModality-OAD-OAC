@@ -3,7 +3,7 @@
 This repository holds the code to replicate the results of the VALOR-based Two-Modality Training.
 It can be used to train and test in parallel, and also run the recurrent inference for OAD and OAC.
 
->[!IMPORTANT] This repository is intended for the storage of source code. Please note that the associated data is not included, and therefore, additional steps will be needed to run the code.
+[!IMPORTANT] This repository is intended for the storage of source code. Please note that the associated data is not included, and therefore, additional steps will be needed to run the code.
 
 ## Setup
 
