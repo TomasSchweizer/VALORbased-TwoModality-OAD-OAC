@@ -1,4 +1,5 @@
 **/data
+**/data_not_mounted/
 **/data_not_mounted/DATA-thumos-corrected-labels
 **/data_not_mounted/DATA-thumos-fps24-frames16-swstride6_MODEL-vit-base_pretrain-videomaev2-k710-valor-ufc101_fps-24_frames-16_swstride-6
 **/data_not_mounted/DATA-thumos-fps24-frames6_MODEL-resnet50-k400-fps24to30-frames8
